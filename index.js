@@ -7,13 +7,13 @@ app.use(express.json());
 
 let options = "";
 let sURL = "";
-let request_ = require('request');
+const request_ = require('request');
+const { Client } = require('pg');
 
 app.post('/', function (req, res) {
 
     try{
         // Подключение к базе данных
-        const { Client } = require('pg');
         const client = new Client({
             connectionString: process.env.DATABASE_URL,
         });
@@ -123,13 +123,12 @@ app.post('/', function (req, res) {
             if (!error) {
                 // Проверяем отмену авторизации
                 if(body.indexOf("Авторизация отменена")!==-1){
-                    // Удаляем привязку
                     // Подключение к базе данных
-                    const { Client1 } = require('pg');
-                    const client1 = new Client1({
+                    const client1 = new Client({
                         connectionString: process.env.DATABASE_URL,
                     });
                     client1.connect();
+                    // Удаляем привязку
                     client1.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
                         client1.end();
                         res.json({
@@ -155,8 +154,7 @@ app.post('/', function (req, res) {
             else
             {
                 // Подключение к базе данных
-                const { Client1 } = require('pg');
-                const client1 = new Client1({
+                const client1 = new Client({
                     connectionString: process.env.DATABASE_URL,
                 });
                 // Удаляем привязку, если не смогли перейти на клиента
