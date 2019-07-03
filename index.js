@@ -10,7 +10,8 @@ app.post('/', function (req, res) {
 try{
 
 var Datastore = require('nedb');
-var db = new Datastore({filename : 'users.db', autoload: true});
+var db = new Datastore({filename : 'users.db'});
+db.loadDatabase(function (error) {
 
 //db.insert({name : "Boris", year: 1946}, function (error, newDoc) {
 db.find({ name: 'Boris' }, function (error, docs) {
@@ -22,8 +23,11 @@ db.find({ name: 'Boris' }, function (error, docs) {
         text: "--"+docs.length,
         end_session: false,
       },
-    })
-})
+    });
+
+});
+
+});
 
 }catch(e){
   var err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
