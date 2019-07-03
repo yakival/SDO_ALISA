@@ -195,7 +195,7 @@ app.post('/', function (req, res) {
         }
     }, 1500, req, res);
 
-}).catch(e =>
+})().catch(e =>
         res.json({
             version: req.body.version,
             session: req.body.session,
