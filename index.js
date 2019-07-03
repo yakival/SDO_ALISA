@@ -21,7 +21,7 @@ try{
 
     }else{
       // Новый пользователь
-      if(res.body.request.command != ""){
+      if(res.body.request.command !== ""){
         // Есть текст команды
         var mURL = res.body.request.command.split(" ");
       }else{
