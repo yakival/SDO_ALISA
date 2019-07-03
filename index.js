@@ -71,7 +71,7 @@ app.post('/', function (req, res) {
                                 version: req.body.version,
                                 session: req.body.session,
                                 response: {
-                                    text: "Ошибка подключения к ресурсу. "+error,
+                                    text: "Ошибка подключения к ресурсу "+sURL+". "+error,
                                     end_session: false,
                                 },
                             });
@@ -157,7 +157,7 @@ app.post('/', function (req, res) {
                                                 version: req.body.version,
                                                 session: req.body.session,
                                                 response: {
-                                                    text: "Ошибка подключения к ресурсу. "+error,
+                                                    text: "Ошибка подключения к ресурсу "+sURL+". "+error,
                                                     end_session: false,
                                                 },
                                             });
