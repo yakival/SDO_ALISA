@@ -18,6 +18,7 @@ let request_ = require('request');
 
 app.post('/', function (req, res) {
 
+    let e = new Error();
     try{
         req_ = req;
         res_ = res;
