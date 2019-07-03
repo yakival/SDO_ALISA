@@ -11,7 +11,6 @@ const client = new Client({
 });
 client.connect();
 
-let res_, req_;
 let options = "";
 let sURL = "";
 let request_ = require('request');
@@ -19,9 +18,6 @@ let request_ = require('request');
 app.post('/', function (req, res) {
 
     try{
-        req_ = req;
-        res_ = res;
-
         // Проверяем пользователя в базе данных
         client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs){
             if(rs.rows.length > 0){
@@ -109,7 +105,7 @@ app.post('/', function (req, res) {
         });
     }
 
-    setTimeout(() => {
+    setTimeout(function(req_, res_) {
         res_.json({
             version: req_.body.version,
             session: req_.body.session,
@@ -118,7 +114,7 @@ app.post('/', function (req, res) {
                 end_session: false,
             },
         });
-    }, 1500);
+    }, 1500, req, res);
 
     ////////////////////////////////////////////////////////////////////////
     function httpSend(){
