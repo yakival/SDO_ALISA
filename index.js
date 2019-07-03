@@ -27,7 +27,7 @@ try{
         if(mURL.length<4){
           // Короткий ключ
           res.json({
-            version: req.body.versiocn,
+            version: req.body.version,
             session: req.body.session,
             response: {
               text: "Задайте код доступа",
@@ -39,7 +39,7 @@ try{
         }
       }else{
         res.json({
-          version: req.body.versiocn,
+          version: req.body.version,
           session: req.body.session,
           response: {
             text: "Задайте код доступа",
