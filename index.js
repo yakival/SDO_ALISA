@@ -109,7 +109,7 @@ app.post('/', function (req, res) {
                             sURL = mURL[0]+"//"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/alisa.aspx";
                             client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
-                                    url: sURL,
+                                    url: sURL + "?step=1",
                                     method: 'PUT',
                                     body: JSON.stringify(
                                         {
@@ -209,53 +209,6 @@ app.post('/', function (req, res) {
             
         }
     }, 1500, req, res);
-
-    ////////////////////////////////////////////////////////////////////////
-    function httpSend(){
-        request_(options, function (error, response, body) {
-            if (!error) {
-                // Проверяем отмену авторизации
-                if(body.indexOf("Авторизация отменена")!==-1){
-                    // Удаляем привязку
-                    client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                        client.end();
-                        res.json({
-                            version: req.body.version,
-                            session: req.body.session,
-                            response: {
-                                text: body,
-                                end_session: false,
-                            },
-                        });
-                    });
-                }else{
-                    res.json({
-                        version: req.body.version,
-                        session: req.body.session,
-                        response: {
-                            text: body,
-                            end_session: false,
-                        },
-                    });
-                }
-            }
-            else
-            {
-                // Удаляем привязку, если не смогли перейти на клиента
-                client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                    client.end();
-                    res.json({
-                        version: req.body.version,
-                        session: req.body.session,
-                        response: {
-                            text: "Ошибка подключения к ресурсу. "+error,
-                            end_session: false,
-                        },
-                    });
-                });
-            }
-        });
-    }
 
 });
 
