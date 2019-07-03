@@ -22,6 +22,11 @@ app.post('/', function (req, res) {
         // Проверяем пользователя в базе данных
         client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs){
             if(rs.rows.length > 0){
+                // Проверяем отмену авторизации
+                if((req.body.request.command.toLowerCase().indexOf("отмена") !== -1)&&(req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)){
+                    client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                    });
+                }
                 options = {
                     url: rs.rows[0].url,
                     method: 'PUT',
@@ -32,35 +37,16 @@ app.post('/', function (req, res) {
                             command: req.body.request.command
                         })
                 };
-                //client.end();
-                // Отправляем запрос клиенту
-                //httpSend();
                 request_(options, function (error, response, body) {
                     if (!error) {
-                        // Проверяем отмену авторизации
-                        if(body.indexOf("Авторизация отменена")!==-1){
-                            // Удаляем привязку
-                            client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                                //client.end();
-                                res.json({
-                                    version: req.body.version,
-                                    session: req.body.session,
-                                    response: {
-                                        text: body,
-                                        end_session: false,
-                                    },
-                                });
-                            });
-                        }else{
-                            res.json({
-                                version: req.body.version,
-                                session: req.body.session,
-                                response: {
-                                    text: body,
-                                    end_session: false,
-                                },
-                            });
-                        }
+                        res.json({
+                            version: req.body.version,
+                            session: req.body.session,
+                            response: {
+                                text: body,
+                                end_session: false,
+                            },
+                        });
                     }
                     else
                     {
@@ -106,7 +92,7 @@ app.post('/', function (req, res) {
                             });
                         }else{
                             //client.end();
-                            sURL = mURL[0]+"://"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/alisa.asp";
+                            sURL = mURL[0]+"://"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/portal/alisa.asp";
                             client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
                                     url: sURL + "?step=1",
@@ -118,35 +104,16 @@ app.post('/', function (req, res) {
                                             command: req.body.request.command
                                         })
                                 };
-                                //client.end();
-                                // Отправляем запрос клиенту
-                                //httpSend();
                                 request_(options, function (error, response, body) {
                                     if (!error) {
-                                        // Проверяем отмену авторизации
-                                        if(body.indexOf("Авторизация отменена")!==-1){
-                                            // Удаляем привязку
-                                            client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                                                //client.end();
-                                                res.json({
-                                                    version: req.body.version,
-                                                    session: req.body.session,
-                                                    response: {
-                                                        text: body,
-                                                        end_session: false,
-                                                    },
-                                                });
-                                            });
-                                        }else{
-                                            res.json({
-                                                version: req.body.version,
-                                                session: req.body.session,
-                                                response: {
-                                                    text: body,
-                                                    end_session: false,
-                                                },
-                                            });
-                                        }
+                                        res.json({
+                                            version: req.body.version,
+                                            session: req.body.session,
+                                            response: {
+                                                text: body,
+                                                end_session: false,
+                                            },
+                                        });
                                     }
                                     else
                                     {
