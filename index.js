@@ -10,22 +10,40 @@ let sURL = "";
 const request_ = require('request');
 
 app.post('/', function (req, res) {
+(async () => {
+    try {
+        // Подключение к базе данных //////////////////////
+        const Pool = require('pg-pool');
+        const url = require('url')
 
-    try{
-        // Подключение к базе данных
-        const { Client } = require('pg');
-        const client = new Client({
-            connectionString: process.env.DATABASE_URL,
-        });
-        client.connect();
+        const params = url.parse(process.env.DATABASE_URL);
+        const auth = params.auth.split(':');
+
+        const config = {
+            user: auth[0],
+            password: auth[1],
+            host: params.hostname,
+            port: params.port,
+            database: params.pathname.split('/')[1],
+            ssl: true
+        };
+
+        const pool = new Pool(config);
+        ////////////////////////////////////////////////////
+
+        //const { Client } = require('pg');
+        //const client = new Client({
+        //    connectionString: process.env.DATABASE_URL,
+        //});
+        //client.connect();
+        let client = await pool.connect();
 
         // Проверяем пользователя в базе данных
-        client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs){
-            if(rs.rows.length > 0){
+        let rs = await client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id]);
+            if (rs.rows.length > 0) {
                 // Проверяем отмену авторизации
-                if((req.body.request.command.toLowerCase().indexOf("отмена") !== -1)&&(req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)){
-                    client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                    });
+                if ((req.body.request.command.toLowerCase().indexOf("отмена") !== -1) && (req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)) {
+                    await client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id];
                 }
                 options = {
                     url: rs.rows[0].url,
@@ -39,7 +57,7 @@ app.post('/', function (req, res) {
                 };
                 request_(options, function (error, response, body) {
                     if (!error) {
-                        client.end();
+                        client.release();
                         res.json({
                             version: req.body.version,
                             session: req.body.session,
@@ -48,29 +66,27 @@ app.post('/', function (req, res) {
                                 end_session: false,
                             },
                         });
-                    }
-                    else
-                    {
+                    } else {
                         // Удаляем привязку, если не смогли перейти на клиента
-                        client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                            client.end();
+                        client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function (err, rs) {
+                            client.release();
                             res.json({
                                 version: req.body.version,
                                 session: req.body.session,
                                 response: {
-                                    text: "Ошибка подключения к ресурсу "+sURL+". "+error,
+                                    text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
                                     end_session: false,
                                 },
                             });
                         });
                     }
                 });
-            }else{
+            } else {
                 // Новый пользователь
-                if(req.body.request.command !== ""){
+                if (req.body.request.command !== "") {
                     // Есть текст команды
                     let mURL = req.body.request.command.split(" ");
-                    if(mURL.length<5){
+                    if (mURL.length < 5) {
                         // Короткий ключ
                         client.end();
                         res.json({
@@ -81,8 +97,8 @@ app.post('/', function (req, res) {
                                 end_session: false,
                             },
                         });
-                    }else{
-                        if(mURL[0].indexOf("http")===-1){
+                    } else {
+                        if (mURL[0].indexOf("http") === -1) {
                             // Префикс протокола не правильный
                             client.end();
                             res.json({
@@ -93,9 +109,9 @@ app.post('/', function (req, res) {
                                     end_session: false,
                                 },
                             });
-                        }else{
-                            sURL = mURL[0]+"://"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/portal/alisa.asp";
-                            client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
+                        } else {
+                            sURL = mURL[0] + "://" + mURL[1] + "." + mURL[2] + "." + mURL[3] + ((mURL.length > 5) ? ":" + mURL[4] : "") + "/portal/alisa.asp";
+                            client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function (err, rs) {
                                 options = {
                                     url: sURL + "?step=1",
                                     method: 'PUT',
@@ -117,17 +133,15 @@ app.post('/', function (req, res) {
                                                 end_session: false,
                                             },
                                         });
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         // Удаляем привязку, если не смогли перейти на клиента
-                                        client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                                        client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function (err, rs) {
                                             client.end();
                                             res.json({
                                                 version: req.body.version,
                                                 session: req.body.session,
                                                 response: {
-                                                    text: "Ошибка подключения к ресурсу "+sURL+". "+error,
+                                                    text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
                                                     end_session: false,
                                                 },
                                             });
@@ -138,7 +152,7 @@ app.post('/', function (req, res) {
                         }
 
                     }
-                }else{
+                } else {
                     client.end();
                     res.json({
                         version: req.body.version,
@@ -150,9 +164,8 @@ app.post('/', function (req, res) {
                     });
                 }
             }
-        });
 
-    }catch(e){
+    } catch (e) {
         let err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
 
         client.end();
@@ -166,7 +179,7 @@ app.post('/', function (req, res) {
         });
     }
 
-    setTimeout(function(req_, res_) {
+    setTimeout(function (req_, res_) {
         try {
             client.end();
             res_.json({
@@ -177,10 +190,23 @@ app.post('/', function (req, res) {
                     end_session: false,
                 },
             });
-        }catch(e) {
-            
+        } catch (e) {
+
         }
     }, 1500, req, res);
+
+}).catch(e => {
+        let err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
+
+        res.json({
+            version: req.body.version,
+            session: req.body.session,
+            response: {
+                text: err,
+                end_session: false,
+            },
+        });
+    })
 
 });
 
