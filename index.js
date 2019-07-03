@@ -39,14 +39,14 @@ try{
 
         }
       }else{
-        res.json({
+        res.json(JSON.stringify({
           version: req.body.version,
           session: req.body.session,
           response: {
             text: "Задайте код доступа",
             end_session: false,
           },
-        });
+        }));
       }
     }
     client.end();
