@@ -6,6 +6,14 @@ const app = express();
 app.use(express.json());
 
 app.post('/', function (req, res) {
+    res.json({
+      version: req.body.version,
+      session: req.body.session,
+      response: {
+        text: "1111",
+        end_session: false,
+      },
+    });
 
   if (req.body.request.command == "no text")
   {
