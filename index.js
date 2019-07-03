@@ -8,12 +8,12 @@ app.use(express.json());
 let options = "";
 let sURL = "";
 const request_ = require('request');
-const { Client } = require('pg');
 
 app.post('/', function (req, res) {
 
     try{
         // Подключение к базе данных
+        const { Client } = require('pg');
         const client = new Client({
             connectionString: process.env.DATABASE_URL,
         });
@@ -32,7 +32,7 @@ app.post('/', function (req, res) {
                             command: req.body.request.command
                         })
                 };
-                client.end();
+                //client.end();
                 // Отправляем запрос клиенту
                 //httpSend();
                 request_(options, function (error, response, body) {
@@ -41,7 +41,7 @@ app.post('/', function (req, res) {
                         if(body.indexOf("Авторизация отменена")!==-1){
                             // Удаляем привязку
                             client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                                client.end();
+                                //client.end();
                                 res.json({
                                     version: req.body.version,
                                     session: req.body.session,
@@ -66,7 +66,7 @@ app.post('/', function (req, res) {
                     {
                         // Удаляем привязку, если не смогли перейти на клиента
                         client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                            client.end();
+                            //client.end();
                             res.json({
                                 version: req.body.version,
                                 session: req.body.session,
@@ -105,7 +105,7 @@ app.post('/', function (req, res) {
                                 },
                             });
                         }else{
-                            client.end();
+                            //client.end();
                             sURL = mURL[0]+"//"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/alisa.aspx";
                             client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
@@ -118,7 +118,7 @@ app.post('/', function (req, res) {
                                             command: req.body.request.command
                                         })
                                 };
-                                client.end();
+                                //client.end();
                                 // Отправляем запрос клиенту
                                 //httpSend();
                                 request_(options, function (error, response, body) {
@@ -127,7 +127,7 @@ app.post('/', function (req, res) {
                                         if(body.indexOf("Авторизация отменена")!==-1){
                                             // Удаляем привязку
                                             client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                                                client.end();
+                                                //client.end();
                                                 res.json({
                                                     version: req.body.version,
                                                     session: req.body.session,
@@ -152,7 +152,7 @@ app.post('/', function (req, res) {
                                     {
                                         // Удаляем привязку, если не смогли перейти на клиента
                                         client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                                            client.end();
+                                            //client.end();
                                             res.json({
                                                 version: req.body.version,
                                                 session: req.body.session,
