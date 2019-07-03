@@ -5,6 +5,8 @@ const app = express();
 
 app.use(express.json());
 
+app.post('/', function (req, res) {
+
 try{
 
 var Datastore = require('nedb');
@@ -12,7 +14,6 @@ var db = new Datastore({filename : 'users.db', autoload: true});
 
 db.insert({name : "Boris", year: 1946}, function (error, newDoc) {
 
-app.post('/', function (req, res) {
     res.json({
       version: req.body.version,
       session: req.body.session,
@@ -23,12 +24,9 @@ app.post('/', function (req, res) {
     })
 })
 
-})
-
 }catch(e){
   var err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
 
-app.post('/', function (req, res) {
     res.json({
       version: req.body.version,
       session: req.body.session,
@@ -37,7 +35,6 @@ app.post('/', function (req, res) {
         end_session: false,
       },
     });
-});
 
 }
 
