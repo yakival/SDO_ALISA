@@ -21,9 +21,22 @@ try{
 
     }else{
       // Новый пользователь
-      if(res.body.request.command !== ""){
+      if(req.body.request.command !== ""){
         // Есть текст команды
-        var mURL = res.body.request.command.split(" ");
+        var mURL = req.body.request.command.split(" ");
+        if(mURL.length<4){
+          // Короткий ключ
+          res.json({
+            version: req.body.versiocn,
+            session: req.body.session,
+            response: {
+              text: "Задайте код доступа",
+              end_session: false,
+            },
+          });
+        }else{
+
+        }
       }else{
         res.json({
           version: req.body.versiocn,
