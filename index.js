@@ -9,27 +9,25 @@ app.post('/', function (req, res) {
 
 try{
 
-var Datastore = require('nedb');
-var db = new Datastore({filename : 'users.db'});
-db.loadDatabase(function (error) {
+var pg = require('pg');
 
-//db.insert({name : "Boris", year: 1946}, function (error, newDoc) {
-db.find({ name: 'Boris' }, function (error, docs) {
+pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 
     res.json({
       version: req.body.version,
       session: req.body.session,
       response: {
-        text: "--"+docs.length,
+        text: "--" + err,
         end_session: false,
       },
     });
 
-});
-
+//  client.query('SELECT * FROM your_table', function(err, result) {
+//  });
 });
 
 }catch(e){
+
   var err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
 
     res.json({
