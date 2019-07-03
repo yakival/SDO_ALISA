@@ -9,31 +9,34 @@ app.post('/', function (req, res) {
 
 try{
 
-const { Client } = require('pg');
+  const { Client } = require('pg');
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
+  client.connect();
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
+  // Проверяем пользователя в базе данных
+  client.query('SELECT name, url FROM users WHERE name=$1;', [req.body.session.user_id], function(err, rs){
+    if(rs.rows.length > 0){
 
-client.connect();
-
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', function(err, rs){
-  var str = "";
-  for (let row of rs.rows) {
-    str += JSON.stringify(row);
-  }
-  client.end();
-
-    res.json({
-      version: req.body.version,
-      session: req.body.session,
-      response: {
-        text: "--"+str,
-        end_session: false,
-      },
-    });
-
-});
+    }else{
+      // Новый пользователь
+      if(res.body.request.command != ""){
+        // Есть текст команды
+        var mURL = res.body.request.command.split(" ");
+      }else{
+        res.json({
+          version: req.body.versiocn,
+          session: req.body.session,
+          response: {
+            text: "Задайте код доступа",
+            end_session: false,
+          },
+        });
+      }
+    }
+    client.end();
+  });
 
 }catch(e){
 
