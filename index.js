@@ -17,20 +17,22 @@ const client = new Client({
 
 client.connect();
 
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', function(err, res){
+client.query('SELECT table_schema,table_name FROM information_schema.tables;', function(err, rs){
+  var str = "";
+  for (let row of rs.rows) {
+    str += JSON.stringify(row);
+  }
+  client.end();
+
     res.json({
       version: req.body.version,
       session: req.body.session,
       response: {
-        text: "--",
+        text: "--"+str,
         end_session: false,
       },
     });
 
-//  for (let row of res.rows) {
-//    console.log(JSON.stringify(row));
-//  }
-  client.end();
 });
 
 }catch(e){
