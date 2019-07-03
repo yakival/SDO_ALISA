@@ -107,15 +107,6 @@ app.post('/', function (req, res) {
                         }else{
                             //client.end();
                             sURL = mURL[0]+"://"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/alisa.asp";
-                            res.json({
-                                version: req.body.version,
-                                session: req.body.session,
-                                response: {
-                                    text: sURL + "?step=1",
-                                    end_session: false,
-                                },
-                            });
-                            /*
                             client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
                                     url: sURL + "?step=1",
@@ -174,7 +165,6 @@ app.post('/', function (req, res) {
                                     }
                                 });
                             });
-                             */
                         }
 
                     }
