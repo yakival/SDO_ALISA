@@ -39,6 +39,7 @@ app.post('/', function (req, res) {
                 };
                 request_(options, function (error, response, body) {
                     if (!error) {
+                        client.end();
                         res.json({
                             version: req.body.version,
                             session: req.body.session,
@@ -52,6 +53,7 @@ app.post('/', function (req, res) {
                     {
                         // Удаляем привязку, если не смогли перейти на клиента
                         client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                            client.end();
                             res.json({
                                 version: req.body.version,
                                 session: req.body.session,
@@ -70,6 +72,7 @@ app.post('/', function (req, res) {
                     let mURL = req.body.request.command.split(" ");
                     if(mURL.length<5){
                         // Короткий ключ
+                        client.end();
                         res.json({
                             version: req.body.version,
                             session: req.body.session,
@@ -81,6 +84,7 @@ app.post('/', function (req, res) {
                     }else{
                         if(mURL[0].indexOf("http")===-1){
                             // Префикс протокола не правильный
+                            client.end();
                             res.json({
                                 version: req.body.version,
                                 session: req.body.session,
@@ -104,6 +108,7 @@ app.post('/', function (req, res) {
                                 };
                                 request_(options, function (error, response, body) {
                                     if (!error) {
+                                        client.end();
                                         res.json({
                                             version: req.body.version,
                                             session: req.body.session,
@@ -117,6 +122,7 @@ app.post('/', function (req, res) {
                                     {
                                         // Удаляем привязку, если не смогли перейти на клиента
                                         client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                                            client.end();
                                             res.json({
                                                 version: req.body.version,
                                                 session: req.body.session,
@@ -133,6 +139,7 @@ app.post('/', function (req, res) {
 
                     }
                 }else{
+                    client.end();
                     res.json({
                         version: req.body.version,
                         session: req.body.session,
@@ -148,6 +155,7 @@ app.post('/', function (req, res) {
     }catch(e){
         let err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
 
+        client.end();
         res.json({
             version: req.body.version,
             session: req.body.session,
@@ -160,6 +168,7 @@ app.post('/', function (req, res) {
 
     setTimeout(function(req_, res_) {
         try {
+            client.end();
             res_.json({
                 version: req_.body.version,
                 session: req_.body.session,
