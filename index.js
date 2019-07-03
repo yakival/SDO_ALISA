@@ -52,7 +52,6 @@ app.post('/', function (req, res) {
                     {
                         // Удаляем привязку, если не смогли перейти на клиента
                         client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                            //client.end();
                             res.json({
                                 version: req.body.version,
                                 session: req.body.session,
@@ -91,7 +90,6 @@ app.post('/', function (req, res) {
                                 },
                             });
                         }else{
-                            //client.end();
                             sURL = mURL[0]+"://"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/portal/alisa.asp";
                             client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
@@ -119,7 +117,6 @@ app.post('/', function (req, res) {
                                     {
                                         // Удаляем привязку, если не смогли перейти на клиента
                                         client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                                            //client.end();
                                             res.json({
                                                 version: req.body.version,
                                                 session: req.body.session,
@@ -146,7 +143,6 @@ app.post('/', function (req, res) {
                     });
                 }
             }
-            //client.end();
         });
 
     }catch(e){
