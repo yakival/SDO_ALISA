@@ -195,18 +195,16 @@ app.post('/', function (req, res) {
         }
     }, 1500, req, res);
 
-}).catch(e => {
-        let err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
-
+}).catch(e =>
         res.json({
             version: req.body.version,
             session: req.body.session,
             response: {
-                text: err,
+                text: 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack,
                 end_session: false,
             },
-        });
-    })
+        })
+    )
 
 });
 
