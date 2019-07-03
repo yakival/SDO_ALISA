@@ -5,6 +5,13 @@ const app = express();
 
 app.use(express.json());
 
+try{
+
+var Datastore = require('nedb');
+var db = new Datastore({filename : '/tmp/users.db', autoload: true});
+
+db.insert({name : "Boris", year: 1946}, function (error, newDoc) {
+
 app.post('/', function (req, res) {
     res.json({
       version: req.body.version,
@@ -14,6 +21,20 @@ app.post('/', function (req, res) {
         end_session: false,
       },
     });
+
+}catch(e){
+  err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
+    	res.end(JSON.stringify(
+        {
+            version,
+            session,
+            response: {
+                text: err,
+                end_session: false
+            },
+        }
+    	));
+}
 
   if (req.body.request.command == "no text")
   {
