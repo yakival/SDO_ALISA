@@ -9,14 +9,14 @@ let options = "";
 let sURL = "";
 const request_ = require('request');
 const { Client } = require('pg');
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-});
 
 app.post('/', function (req, res) {
 
     try{
         // Подключение к базе данных
+        const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+        });
         client.connect();
 
         // Проверяем пользователя в базе данных
@@ -34,7 +34,50 @@ app.post('/', function (req, res) {
                 };
                 client.end();
                 // Отправляем запрос клиенту
-                httpSend();
+                //httpSend();
+                request_(options, function (error, response, body) {
+                    if (!error) {
+                        // Проверяем отмену авторизации
+                        if(body.indexOf("Авторизация отменена")!==-1){
+                            // Удаляем привязку
+                            client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                                client.end();
+                                res.json({
+                                    version: req.body.version,
+                                    session: req.body.session,
+                                    response: {
+                                        text: body,
+                                        end_session: false,
+                                    },
+                                });
+                            });
+                        }else{
+                            res.json({
+                                version: req.body.version,
+                                session: req.body.session,
+                                response: {
+                                    text: body,
+                                    end_session: false,
+                                },
+                            });
+                        }
+                    }
+                    else
+                    {
+                        // Удаляем привязку, если не смогли перейти на клиента
+                        client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                            client.end();
+                            res.json({
+                                version: req.body.version,
+                                session: req.body.session,
+                                response: {
+                                    text: "Ошибка подключения к ресурсу. "+error,
+                                    end_session: false,
+                                },
+                            });
+                        });
+                    }
+                });
             }else{
                 // Новый пользователь
                 if(req.body.request.command !== ""){
@@ -77,7 +120,50 @@ app.post('/', function (req, res) {
                                 };
                                 client.end();
                                 // Отправляем запрос клиенту
-                                httpSend();
+                                //httpSend();
+                                request_(options, function (error, response, body) {
+                                    if (!error) {
+                                        // Проверяем отмену авторизации
+                                        if(body.indexOf("Авторизация отменена")!==-1){
+                                            // Удаляем привязку
+                                            client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                                                client.end();
+                                                res.json({
+                                                    version: req.body.version,
+                                                    session: req.body.session,
+                                                    response: {
+                                                        text: body,
+                                                        end_session: false,
+                                                    },
+                                                });
+                                            });
+                                        }else{
+                                            res.json({
+                                                version: req.body.version,
+                                                session: req.body.session,
+                                                response: {
+                                                    text: body,
+                                                    end_session: false,
+                                                },
+                                            });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Удаляем привязку, если не смогли перейти на клиента
+                                        client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                                            client.end();
+                                            res.json({
+                                                version: req.body.version,
+                                                session: req.body.session,
+                                                response: {
+                                                    text: "Ошибка подключения к ресурсу. "+error,
+                                                    end_session: false,
+                                                },
+                                            });
+                                        });
+                                    }
+                                });
                             });
                         }
 
