@@ -20,23 +20,25 @@ app.post('/', function (req, res) {
         text: "1111",
         end_session: false,
       },
+    })
+})
+
+})
+
+}catch(e){
+  var err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
+
+app.post('/', function (req, res) {
+    res.json({
+      version: req.body.version,
+      session: req.body.session,
+      response: {
+        text: err,
+        end_session: false,
+      },
     });
 });
 
-});
-
-}catch(e){
-  err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
-    	res.end(JSON.stringify(
-        {
-            version,
-            session,
-            response: {
-                text: err,
-                end_session: false
-            },
-        }
-    	));
 }
 
   if (req.body.request.command == "no text")
