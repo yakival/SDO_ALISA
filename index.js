@@ -5,6 +5,7 @@ const app = express();
 
 app.use(express.json());
 
+var res_, req_;
 var options = "";
 var sURL = "";
 var request_ = require('request');
@@ -12,6 +13,8 @@ var request_ = require('request');
 app.post('/', function (req, res) {
 
   try{
+    req_ = req;
+    res_ = res;
 
     const { Client } = require('pg');
     const client = new Client({
@@ -106,9 +109,9 @@ app.post('/', function (req, res) {
   httpSend();
 
   setTimeout(() => {
-    res.json({
-      version: req.body.version,
-      session: req.body.session,
+    res_.json({
+      version: req_.body.version,
+      session: req_.body.session,
       response: {
         text: "Команда выполняется. Узнайте статус выполнения позже.",
         end_session: false,
