@@ -9,9 +9,14 @@ app.post('/', function (req, res) {
 
 try{
 
-var pg = require('pg');
+const { Client } = require('pg');
 
-pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
+});
+
+client.connect();
 
     res.json({
       version: req.body.version,
@@ -22,9 +27,6 @@ pg.connect(process.env.DATABASE_URL, function(err, client, done) {
       },
     });
 
-//  client.query('SELECT * FROM your_table', function(err, result) {
-//  });
-});
 
 }catch(e){
 
