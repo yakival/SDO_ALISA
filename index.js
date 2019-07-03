@@ -8,6 +8,7 @@ app.use(express.json());
 app.post('/', function (req, res) {
 
 try{
+  res.charset = 'Windows-1251';
 
   const { Client } = require('pg');
   const client = new Client({
