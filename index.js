@@ -115,6 +115,7 @@ app.post('/', function (req, res) {
                                     end_session: false,
                                 },
                             });
+                            /*
                             client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
                                     url: sURL + "?step=1",
@@ -173,6 +174,7 @@ app.post('/', function (req, res) {
                                     }
                                 });
                             });
+                             */
                         }
 
                     }
