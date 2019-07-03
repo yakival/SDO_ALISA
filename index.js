@@ -17,6 +17,7 @@ const client = new Client({
 
 client.connect();
 
+client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
     res.json({
       version: req.body.version,
       session: req.body.session,
@@ -26,6 +27,11 @@ client.connect();
       },
     });
 
+//  for (let row of res.rows) {
+//    console.log(JSON.stringify(row));
+//  }
+  client.end();
+});
 
 }catch(e){
 
