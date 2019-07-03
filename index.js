@@ -124,7 +124,14 @@ app.post('/', function (req, res) {
                 // Проверяем отмену авторизации
                 if(body.indexOf("Авторизация отменена")!==-1){
                     // Удаляем привязку
-                    client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                    // Подключение к базе данных
+                    const { Client1 } = require('pg');
+                    const client1 = new Client1({
+                        connectionString: process.env.DATABASE_URL,
+                    });
+                    client1.connect();
+                    client1.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                        client1.end();
                         res.json({
                             version: req.body.version,
                             session: req.body.session,
@@ -147,8 +154,13 @@ app.post('/', function (req, res) {
             }
             else
             {
+                // Подключение к базе данных
+                const { Client1 } = require('pg');
+                const client1 = new Client1({
+                    connectionString: process.env.DATABASE_URL,
+                });
                 // Удаляем привязку, если не смогли перейти на клиента
-                client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                client1.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
                     res.json({
                         version: req.body.version,
                         session: req.body.session,
