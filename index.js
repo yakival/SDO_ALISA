@@ -36,7 +36,19 @@ try{
             },
           });
         }else{
+          if(mURL[0].indexOf("http")===-1){
+            // Префикс протокола не правильный
+            res.json({
+              version: req.body.version,
+              session: req.body.session,
+              response: {
+                text: "prefix---Задайте код доступа",
+                end_session: false,
+              },
+            });
+          }else{
 
+          }
         }
       }else{
         res.json({
