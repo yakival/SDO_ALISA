@@ -18,7 +18,6 @@ let request_ = require('request');
 
 app.post('/', function (req, res) {
 
-    let e = new Error();
     try{
         req_ = req;
         res_ = res;
@@ -146,7 +145,7 @@ app.post('/', function (req, res) {
                         version: req.body.version,
                         session: req.body.session,
                         response: {
-                            text: "Ошибка подключения к ресурсу.",
+                            text: "Ошибка подключения к ресурсу. "+error,
                             end_session: false,
                         },
                     });
