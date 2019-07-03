@@ -17,7 +17,7 @@ const client = new Client({
 
 client.connect();
 
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+client.query('SELECT table_schema,table_name FROM information_schema.tables;', function(err, res){
     res.json({
       version: req.body.version,
       session: req.body.session,
