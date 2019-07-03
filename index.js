@@ -5,12 +5,6 @@ const app = express();
 
 app.use(express.json());
 
-const { Client } = require('pg');
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-});
-client.connect();
-
 let options = "";
 let sURL = "";
 let request_ = require('request');
@@ -18,6 +12,13 @@ let request_ = require('request');
 app.post('/', function (req, res) {
 
     try{
+        // Подключение к базе данных
+        const { Client } = require('pg');
+        const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+        });
+        client.connect();
+
         // Проверяем пользователя в базе данных
         client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs){
             if(rs.rows.length > 0){
@@ -122,20 +123,31 @@ app.post('/', function (req, res) {
             if (!error) {
                 // Проверяем отмену авторизации
                 if(body.indexOf("Авторизация отменена")!==-1){
+                    // Удаляем привязку
                     client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                        res.json({
+                            version: req.body.version,
+                            session: req.body.session,
+                            response: {
+                                text: body,
+                                end_session: false,
+                            },
+                        });
+                    });
+                }else{
+                    res.json({
+                        version: req.body.version,
+                        session: req.body.session,
+                        response: {
+                            text: body,
+                            end_session: false,
+                        },
                     });
                 }
-                res.json({
-                    version: req.body.version,
-                    session: req.body.session,
-                    response: {
-                        text: body,
-                        end_session: false,
-                    },
-                });
             }
             else
             {
+                // Удаляем привязку, если не смогли перейти на клиента
                 client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
                     res.json({
                         version: req.body.version,
