@@ -141,13 +141,15 @@ app.post('/', function (req, res) {
             }
             else
             {
-                res.json({
-                    version: req.body.version,
-                    session: req.body.session,
-                    response: {
-                        text: "Ошибка выполнения команды.",
-                        end_session: false,
-                    },
+                client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                    res.json({
+                        version: req.body.version,
+                        session: req.body.session,
+                        response: {
+                            text: "Ошибка подключения к ресурсу.",
+                            end_session: false,
+                        },
+                    });
                 });
             }
         });
