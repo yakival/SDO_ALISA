@@ -21,6 +21,9 @@ app.post('/', function (req, res) {
         end_session: false,
       },
     });
+});
+
+});
 
 }catch(e){
   err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
