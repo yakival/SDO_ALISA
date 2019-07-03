@@ -23,7 +23,7 @@ app.post('/', function (req, res) {
         res_ = res;
 
         // Проверяем пользователя в базе данных
-        client.query("SELECT name, url FROM users WHERE name='$1';", [req.body.session.user_id], function(err, rs){
+        client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs){
             if(rs.rows.length > 0){
                 options = {
                     url: rs.rows[0].url,
@@ -65,7 +65,7 @@ app.post('/', function (req, res) {
                             });
                         }else{
                             sURL = mURL[0]+"//"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/alisa.aspx";
-                            client.query("INSERT INTO users(name, url) values('$1', '$2');", [req.body.session.user_id, sURL], function(err, rs) {
+                            client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
                                     url: sURL,
                                     method: 'PUT',
@@ -126,7 +126,7 @@ app.post('/', function (req, res) {
             if (!error) {
                 // Проверяем отмену авторизации
                 if(body.indexOf("Авторизация отменена")!==-1){
-                    client.query("DELETE FROM users WHERE name='$1';", [req.body.session.user_id], function(err, rs) {
+                    client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
                     });
                 }
                 res.json({
