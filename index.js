@@ -8,7 +8,7 @@ app.use(express.json());
 try{
 
 var Datastore = require('nedb');
-var db = new Datastore({filename : '/tmp/users.db', autoload: true});
+var db = new Datastore({filename : 'users.db', autoload: true});
 
 db.insert({name : "Boris", year: 1946}, function (error, newDoc) {
 
