@@ -196,14 +196,18 @@ app.post('/', function (req, res) {
     }
 
     setTimeout(function(req_, res_) {
-        res_.json({
-            version: req_.body.version,
-            session: req_.body.session,
-            response: {
-                text: "Команда выполняется. Узнайте статус выполнения позже.",
-                end_session: false,
-            },
-        });
+        try {
+            res_.json({
+                version: req_.body.version,
+                session: req_.body.session,
+                response: {
+                    text: "Команда выполняется. Узнайте статус выполнения позже.",
+                    end_session: false,
+                },
+            });
+        }catch(e) {
+            
+        }
     }, 1500, req, res);
 
     ////////////////////////////////////////////////////////////////////////
