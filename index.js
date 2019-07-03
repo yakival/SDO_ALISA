@@ -16,22 +16,22 @@ try{
   });
   client.connect();
 
-  // Проверяем пользователя в базе данных
+  // РџСЂРѕРІРµСЂСЏРµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…
   client.query('SELECT name, url FROM users WHERE name=$1;', [req.body.session.user_id], function(err, rs){
     if(rs.rows.length > 0){
 
     }else{
-      // Новый пользователь
+      // РќРѕРІС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ
       if(req.body.request.command !== ""){
-        // Есть текст команды
+        // Р•СЃС‚СЊ С‚РµРєСЃС‚ РєРѕРјР°РЅРґС‹
         var mURL = req.body.request.command.split(" ");
         if(mURL.length<4){
-          // Короткий ключ
+          // РљРѕСЂРѕС‚РєРёР№ РєР»СЋС‡
           res.json({
             version: req.body.version,
             session: req.body.session,
             response: {
-              text: "Задайте код доступа",
+              text: "Р—Р°РґР°Р№С‚Рµ РєРѕРґ РґРѕСЃС‚СѓРїР°",
               end_session: false,
             },
           });
@@ -39,14 +39,14 @@ try{
 
         }
       }else{
-        res.json(JSON.stringify({
+        res.json({
           version: req.body.version,
           session: req.body.session,
           response: {
-            text: "Задайте код доступа",
+            text: "Р—Р°РґР°Р№С‚Рµ РєРѕРґ РґРѕСЃС‚СѓРїР°",
             end_session: false,
           },
-        }));
+        });
       }
     }
     client.end();
@@ -54,7 +54,7 @@ try{
 
 }catch(e){
 
-  var err = 'Ошибка ' + e.name + ":" + e.message + "\n" + e.stack;
+  var err = 'РћС€РёР±РєР° ' + e.name + ":" + e.message + "\n" + e.stack;
 
     res.json({
       version: req.body.version,
