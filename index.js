@@ -9,14 +9,14 @@ let options = "";
 let sURL = "";
 const request_ = require('request');
 const { Client } = require('pg');
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+});
 
 app.post('/', function (req, res) {
 
     try{
         // Подключение к базе данных
-        const client = new Client({
-            connectionString: process.env.DATABASE_URL,
-        });
         client.connect();
 
         // Проверяем пользователя в базе данных
@@ -32,6 +32,7 @@ app.post('/', function (req, res) {
                             command: req.body.request.command
                         })
                 };
+                client.end();
                 // Отправляем запрос клиенту
                 httpSend();
             }else{
@@ -61,6 +62,7 @@ app.post('/', function (req, res) {
                                 },
                             });
                         }else{
+                            client.end();
                             sURL = mURL[0]+"//"+mURL[1]+"."+mURL[2]+"."+mURL[3]+((mURL.length>5)?":"+mURL[4]:"")+"/alisa.aspx";
                             client.query("INSERT INTO users(name, url) values($1, $2);", [req.body.session.user_id, sURL], function(err, rs) {
                                 options = {
@@ -73,9 +75,10 @@ app.post('/', function (req, res) {
                                             command: req.body.request.command
                                         })
                                 };
+                                client.end();
+                                // Отправляем запрос клиенту
+                                httpSend();
                             });
-                            // Отправляем запрос клиенту
-                            httpSend();
                         }
 
                     }
@@ -123,14 +126,9 @@ app.post('/', function (req, res) {
             if (!error) {
                 // Проверяем отмену авторизации
                 if(body.indexOf("Авторизация отменена")!==-1){
-                    // Подключение к базе данных
-                    const client1 = new Client({
-                        connectionString: process.env.DATABASE_URL,
-                    });
-                    client1.connect();
                     // Удаляем привязку
-                    client1.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
-                        client1.end();
+                    client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                        client.end();
                         res.json({
                             version: req.body.version,
                             session: req.body.session,
@@ -153,12 +151,9 @@ app.post('/', function (req, res) {
             }
             else
             {
-                // Подключение к базе данных
-                const client1 = new Client({
-                    connectionString: process.env.DATABASE_URL,
-                });
                 // Удаляем привязку, если не смогли перейти на клиента
-                client1.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function(err, rs) {
+                    client.end();
                     res.json({
                         version: req.body.version,
                         session: req.body.session,
