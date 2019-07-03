@@ -12,13 +12,14 @@ try{
 var Datastore = require('nedb');
 var db = new Datastore({filename : 'users.db', autoload: true});
 
-db.insert({name : "Boris", year: 1946}, function (error, newDoc) {
+//db.insert({name : "Boris", year: 1946}, function (error, newDoc) {
+db.find({ name: 'Boris' }, function (error, docs) {
 
     res.json({
       version: req.body.version,
       session: req.body.session,
       response: {
-        text: "1111",
+        text: "--"+docs.length,
         end_session: false,
       },
     })
