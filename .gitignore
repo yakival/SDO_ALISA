@@ -2,6 +2,5 @@
 /node_modules
 npm-debug.log
 deploy.bat
-ps.sql
 .DS_Store
 /*.env

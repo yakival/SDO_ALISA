@@ -16,9 +16,9 @@ app.post('/', function (req, res) {
             const Pool = require('pg-pool');
             const url = require('url')
 
+            // Параметры подключения
             const params = url.parse(process.env.DATABASE_URL);
             const auth = params.auth.split(':');
-
             const config = {
                 user: auth[0],
                 password: auth[1],
@@ -27,18 +27,74 @@ app.post('/', function (req, res) {
                 database: params.pathname.split('/')[1],
                 ssl: true
             };
-
+            // Подключаемся к базе
             const pool = new Pool(config);
-
-            //const { Client } = require('pg');
-            //const client = new Client({
-            //    connectionString: process.env.DATABASE_URL,
-            //});
-            //client.connect();
             let client = await pool.connect();
             ////////////////////////////////////////////////////
 
             // Проверяем пользователя в базе данных
+            let command = req.body.request.command;
+            let rs = await client.query("SELECT * FROM users WHERE name=$1;", [req.body.session.user_id]);
+            if (rs.rows.length > 0) {
+                if(rs.rows[0].auth.length()>0){
+                    // Есть авторизация
+                    /////////////////////////////////////////////////////////////////////////////////////////////////
+                    // Переадрисация на клиента
+                    options = {
+                        url: rs.rows[0].url,
+                        method: 'PUT',
+                        headers : {
+                            "Authorization" : "Basic " + ("user000011" + ":" + "1234567").toString("base64")
+                        },
+                        body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
+                            command: req.body.request.command
+                        })
+                    };
+                    request_(options, function (error, response, body) {
+                        if (!error) {
+                            client.release();
+                            res.json({
+                                version: req.body.version,
+                                session: req.body.session,
+                                response: {
+                                    text: body,
+                                    end_session: false,
+                                },
+                            });
+                        } else {
+                            // Удаляем привязку, если не смогли перейти на клиента
+                            client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function (err, rs) {
+                                client.release();
+                                res.json({version: req.body.version, session: req.body.session, response: {
+                                        text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
+                                        end_session: false,
+                                    },
+                                });
+                            });
+                        }
+                    });
+                    /////////////////////////////////////////////////////////////////////////////////////////////////
+                }else{
+                    // Проверяем отмену авторизации
+                    if ((req.body.request.command.toLowerCase().indexOf("выход") !== -1) && (req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)) {
+                        await client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id]);
+                    }
+
+                }
+            }else{
+                // Новый пользователь
+                await client.query("INSERT INTO users(name, step) values($1, 1);", [req.body.session.user_id]);
+                // Возвращаем результат
+                client.release();
+                res.json({version: req.body.version, session: req.body.session, response: {
+                        text: "Укажите адрес ресурса",
+                        end_session: false,
+                    },
+                });
+            }
+            return;
+
+                // Проверяем пользователя в базе данных
             let rs = await client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id]);
             if (rs.rows.length > 0) {
                 // Проверяем отмену авторизации
@@ -48,11 +104,8 @@ app.post('/', function (req, res) {
                 options = {
                     url: rs.rows[0].url,
                     method: 'PUT',
-                    body: JSON.stringify(
-                        {
-                            session: req.body.session,
-                            nlu: req.body.request.nlu,
-                            command: req.body.request.command
+                    body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
+                        command: req.body.request.command
                         })
                 };
                 request_(options, function (error, response, body) {
