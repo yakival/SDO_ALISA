@@ -92,7 +92,7 @@ app.post('/', function (req, res) {
                     },
                 });
             }
-            return;
+            res.flush();
 
                 // Проверяем пользователя в базе данных
             let rs = await client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id]);
