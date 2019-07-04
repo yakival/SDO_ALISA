@@ -36,7 +36,7 @@ app.post('/', function (req, res) {
             let command = req.body.request.command;
             let rs = await client.query("SELECT * FROM users WHERE name=$1;", [req.body.session.user_id]);
             if (rs.rows.length > 0) {
-                if(rs.rows[0].auth.length()>0){
+                if(rs.rows[0].auth == 0){ // NULL
                     // Есть авторизация
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                     // Переадрисация на клиента
