@@ -77,6 +77,13 @@ app.post('/', function (req, res) {
                 }else{
                     // Получаем адрес ресурса
                     if(rs.rows[0].step===1){
+                        if(command===""){
+                            res.json({version: req.body.version, session: req.body.session, response: {
+                                    text: "Укажите адрес ресурса",
+                                    end_session: false,
+                                },
+                            });
+                        }
                         let mURL = command.split(" ");
                         sURL = "";
                         for(let i=0; i<mURL.length; i++){
