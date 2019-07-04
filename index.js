@@ -95,7 +95,7 @@ app.post('/', function (req, res) {
             res.flush();
 
                 // Проверяем пользователя в базе данных
-            let rs = await client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id]);
+            rs = await client.query("SELECT name, url FROM users WHERE name=$1;", [req.body.session.user_id]);
             if (rs.rows.length > 0) {
                 // Проверяем отмену авторизации
                 if ((req.body.request.command.toLowerCase().indexOf("выход") !== -1) && (req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)) {
