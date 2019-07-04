@@ -75,6 +75,26 @@ app.post('/', function (req, res) {
                     });
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                 }else{
+                    // Получаем адрес ресурса
+                    if(rs.rows[0].step===1){
+                        let mURL = command.split(" ");
+                        sURL = "";
+                        for(let i=0; i<mURL.length; i++){
+                            if(i===1) sURL += "://";
+                            if((i===2)||(i===3)) sURL += ".";
+                            if(i===4) sURL += ":";
+                        }
+                        await client.query("UPDATE users SET url=$1, step=2 where name=$2;", [sURL, req.body.session.user_id]);
+                        // Возвращаем результат
+                        client.release();
+                        res.json({version: req.body.version, session: req.body.session, response: {
+                                text: "Укажите логин",
+                                end_session: false,
+                            },
+                        });
+                    }
+
+
                     // Проверяем отмену авторизации
                     if ((req.body.request.command.toLowerCase().indexOf("выход") !== -1) && (req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)) {
                         await client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id]);
