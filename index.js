@@ -84,9 +84,20 @@ app.post('/', function (req, res) {
                                 },
                             });
                         }
+
+                        // Возвращаем результат
+                        client.release();
+                        res.json({version: req.body.version, session: req.body.session, response: {
+                                text: "---"+mURL.length,
+                                end_session: false,
+                            },
+                        });
+                        return;
+
                         let mURL = command.split(" ");
                         sURL = "";
-                        for(var i=0; i<mURL.length; i++){
+                        let i = 0;
+                        for(i=0; i<mURL.length; i++){
                             if(i===1) sURL += "://";
                             if((i===2)||(i===3)) sURL += ".";
                             if(i===4) sURL += ":";
