@@ -76,7 +76,7 @@ app.post('/', function (req, res) {
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                 }else{
                     // Получаем адрес ресурса
-                    if(rs.rows[0].step===1){
+                    if(rs.rows[0].step==1){
                         if(command===""){
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Укажите адрес ресурса",
@@ -85,6 +85,7 @@ app.post('/', function (req, res) {
                             });
                         }
 
+                        let mURL = command.split(" ");
                         // Возвращаем результат
                         client.release();
                         res.json({version: req.body.version, session: req.body.session, response: {
@@ -94,7 +95,6 @@ app.post('/', function (req, res) {
                         });
                         return;
 
-                        let mURL = command.split(" ");
                         sURL = "";
                         let i = 0;
                         for(i=0; i<mURL.length; i++){
