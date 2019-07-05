@@ -127,7 +127,7 @@ app.post('/', function (req, res) {
                     if(step==3){
                         //if(command===""){
                             res.json({version: req.body.version, session: req.body.session, response: {
-                                    text: "Задайте пароль",
+                                    text: command, //"Задайте пароль",
                                     end_session: false,
                                 },
                             });
