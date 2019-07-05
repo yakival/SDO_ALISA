@@ -64,9 +64,20 @@ app.post('/', function (req, res) {
                             command: req.body.request.original_utterance
                         })
                     };
-                    client.release();
                     request_(options, function (error, response, body) {
                         if (!error) {
+                            if(body.toLowerCase()==="пароль изменен"){
+                                await client.query("UPDATE users SET url=$1, step=3 where name=$2;",
+                                    [rs.rows[0].auth.split(":")[0], req.body.session.user_id]);
+                                client.release();
+                                res.json({version: req.body.version, session: req.body.session, response: {
+                                        text: "Укажите пароль",
+                                        end_session: false,
+                                    },
+                                });
+                                return;
+                            }
+                            client.release();
                             res.json({
                                 version: req.body.version,
                                 session: req.body.session,
@@ -76,6 +87,7 @@ app.post('/', function (req, res) {
                                 },
                             });
                         } else {
+                            client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
                                     end_session: false,
