@@ -55,7 +55,7 @@ app.post('/', function (req, res) {
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                     // Переадрисация на клиента
                     options = {
-                        url: rs.rows[0].url + "/close/alisa.asp",
+                        url: rs.rows[0].url + "/close/staff/alisa.asp",
                         method: 'PUT',
                         headers : {
                             "Authorization" : "Basic " + Buffer.from(rs.rows[0].auth).toString("base64")
