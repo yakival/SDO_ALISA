@@ -27,7 +27,6 @@ app.post('/', function (req, res) {
                 database: params.pathname.split('/')[1],
                 ssl: true
             };
-            // Подключаемся к базе
             const pool = new Pool(config);
             let client = await pool.connect();
             ////////////////////////////////////////////////////
@@ -65,6 +64,7 @@ app.post('/', function (req, res) {
                             command: req.body.request.original_utterance
                         })
                     };
+                    client.release();
                     request_(options, function (error, response, body) {
                         if (!error) {
                             client.release();
@@ -212,7 +212,6 @@ app.post('/', function (req, res) {
 
         setTimeout(function (req_, res_) {
             try {
-                client.end();
                 res_.json({
                     version: req_.body.version,
                     session: req_.body.session,
