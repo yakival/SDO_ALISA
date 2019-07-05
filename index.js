@@ -115,8 +115,7 @@ app.post('/', function (req, res) {
                             return;
                         }
                         sURL = "";
-                        let i = 0;
-                        for(i=0; i<mURL.length; i++){
+                        for(var i=0; i<mURL.length; i++){
                             if(i===1) sURL += "://";
                             if((i===2)||(i===3)) sURL += ".";
                             if(i===4) sURL += ":";
@@ -143,7 +142,16 @@ app.post('/', function (req, res) {
                             });
                             return;
                         }
-
+                        if(command.split(" ").length>0){
+                            client.release();
+                            res.json({version: req.body.version, session: req.body.session, response: {
+                                    text: "Логин указан не правильно. Задайте логин",
+                                    end_session: false,
+                                },
+                            });
+                            return;
+                        }
+                        let validation = new RegExp(/^[A-Za-z0-9_]+$/);
                         await client.query("UPDATE users SET auth=$1, step=3 where name=$2;", [command, req.body.session.user_id]);
                         // Возвращаем результат
                         client.release();
@@ -165,7 +173,15 @@ app.post('/', function (req, res) {
                             });
                             return;
                         }
-
+                        if(command.split(" ").length>0){
+                            client.release();
+                            res.json({version: req.body.version, session: req.body.session, response: {
+                                    text: "Пароль указан не правильно. Задайте пароль",
+                                    end_session: false,
+                                },
+                            });
+                            return;
+                        }
                         let str = "" + rs.rows[0].auth + ":" + command;
                         await client.query("UPDATE users SET auth=$1, step=0 where name=$2;", [str, req.body.session.user_id]);
                         client.release();
