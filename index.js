@@ -103,25 +103,16 @@ app.post('/', function (req, res) {
                             return;
                         }
 
-                        let mURL = command.split(" ");
-                        if(mURL.length<4){
-                            // Возвращаем результат
+                        if((command.split(".")<3)||(command.indexOf("http")===-1)){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
-                                    text: "Не правильно задан адрес. Укажите правильный адрес ресурса.",
+                                    text: "Укажите правильный адрес ресурса",
                                     end_session: false,
                                 },
                             });
                             return;
                         }
-                        sURL = "";
-                        for(var i=0; i<mURL.length; i++){
-                            if(i===1) sURL += "://";
-                            if((i===2)||(i===3)) sURL += ".";
-                            if(i===4) sURL += ":";
-                            sURL += mURL[i];
-                        }
-                        await client.query("UPDATE users SET url=$1, step=2 where name=$2;", [sURL, req.body.session.user_id]);
+                        await client.query("UPDATE users SET url=$1, step=2 where name=$2;", [command, req.body.session.user_id]);
                         // Возвращаем результат
                         client.release();
                         res.json({version: req.body.version, session: req.body.session, response: {
