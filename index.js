@@ -133,20 +133,11 @@ app.post('/', function (req, res) {
                             });
                             return;
                         }
-                        if((command.split(" ").length>1)||(command.length<7)){
-                            client.release();
-                            res.json({version: req.body.version, session: req.body.session, response: {
-                                    text: "Логин указан не правильно. Задайте логин",
-                                    end_session: false,
-                                },
-                            });
-                            return;
-                        }
                         let validation = new RegExp(/^[A-Za-z0-9_]+$/);
                         if(!validation.test(command)){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
-                                    text: "!!!!",
+                                    text: "Логин указан не правильно. Задайте логин",
                                     end_session: false,
                                 },
                             });
@@ -173,7 +164,8 @@ app.post('/', function (req, res) {
                             });
                             return;
                         }
-                        if((command.split(" ").length>1)||(command.length<7)){
+                        let validation = new RegExp(/^[^\u0410-\u044F^\s]+$/);
+                        if(!validation.test(command)){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Пароль указан не правильно. Задайте пароль",
