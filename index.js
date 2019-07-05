@@ -86,10 +86,11 @@ app.post('/', function (req, res) {
                         }
                         let mURL = command.split(" ");
                         sURL = "";
-                        for(let i=0; i<mURL.length; i++){
+                        for(var i=0; i<mURL.length; i++){
                             if(i===1) sURL += "://";
                             if((i===2)||(i===3)) sURL += ".";
                             if(i===4) sURL += ":";
+                            sURL += mURL[i];
                         }
                         await client.query("UPDATE users SET url=$1, step=2 where name=$2;", [sURL, req.body.session.user_id]);
                         // Возвращаем результат
