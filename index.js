@@ -143,7 +143,7 @@ app.post('/', function (req, res) {
                             return;
                         }
                         let validation = new RegExp(/^[A-Za-z0-9_]+$/);
-                        if(!validation){
+                        if(!validation.test(command)){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "!!!!",
