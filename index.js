@@ -57,17 +57,18 @@ app.post('/', function (req, res) {
                         url: rs.rows[0].url + "/close/staff/alisa.asp",
                         method: 'PUT',
                         headers : {
-                            "Accept-Language" : "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
                             "Authorization" : "Basic " + Buffer.from(rs.rows[0].auth).toString("base64")
                         },
                         body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
                             command: req.body.request.original_utterance
                         })
                     };
+                    client.release();
                     request_(options, function (error, response, body) {
                         if (!error) {
+                            /*
                             if (body.toLowerCase() === "пароль изменен") {
-                                client.query("UPDATE users SET url=$1, step=3 where name=$2;",
+                                client.query("UPDATE users SET auth=$1, step=3 where name=$2;",
                                     [rs.rows[0].auth.split(":")[0], req.body.session.user_id], function (err) {
                                     client.release();
                                     res.json({
@@ -78,7 +79,7 @@ app.post('/', function (req, res) {
                                     });
                                 });
                             } else {
-                                client.release();
+                            */
                                 res.json({
                                     version: req.body.version,
                                     session: req.body.session,
@@ -87,9 +88,8 @@ app.post('/', function (req, res) {
                                         end_session: false,
                                     },
                                 });
-                            }
+                            //}
                         } else {
-                            client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
                                     end_session: false,
