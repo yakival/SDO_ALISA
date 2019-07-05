@@ -39,21 +39,13 @@ app.post('/', function (req, res) {
             if (rs.rows.length > 0) {
                 if((!(rs.rows[0].auth == 0)) && (rs.rows[0].step==0)){ // NULL
                     // Есть авторизация
-                    // Возвращаем результат
-                    client.release();
-                    res.json({version: req.body.version, session: req.body.session, response: {
-                            text: Buffer.from(rs.rows[0].auth).toString('base64'),
-                            end_session: false,
-                        },
-                    });
-                    return;
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                     // Переадрисация на клиента
                     options = {
                         url: rs.rows[0].url + "/close/alisa.asp",
                         method: 'PUT',
                         headers : {
-                            "Authorization" : "Basic " + (""+rs.rows[0].auth).toString("base64")
+                            "Authorization" : "Basic " + Buffer.from(rs.rows[0].auth).toString("base64")
                         },
                         body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
                             command: req.body.request.command
@@ -158,7 +150,7 @@ app.post('/', function (req, res) {
                             url: rs.rows[0].url + "/close/alisa.asp",
                             method: 'PUT',
                             headers : {
-                                "Authorization" : "Basic " + str.toString("base64")
+                                "Authorization" : "Basic " + Buffer.from(str).toString("base64")
                             },
                             body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
                                 command: req.body.request.command
