@@ -58,6 +58,7 @@ app.post('/', function (req, res) {
                         url: rs.rows[0].url + "/close/staff/alisa.asp",
                         method: 'PUT',
                         headers : {
+                            "Content-Type" : "text/html",
                             "Authorization" : "Basic " + Buffer.from(rs.rows[0].auth).toString("base64")
                         },
                         body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
