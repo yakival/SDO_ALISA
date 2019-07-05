@@ -67,7 +67,6 @@ app.post('/', function (req, res) {
                     client.release();
                     request_(options, function (error, response, body) {
                         if (!error) {
-                            client.release();
                             res.json({
                                 version: req.body.version,
                                 session: req.body.session,
@@ -77,15 +76,11 @@ app.post('/', function (req, res) {
                                 },
                             });
                         } else {
-                            // Удаляем привязку, если не смогли перейти на клиента
-                            //client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function (err, rs) {
-                                client.release();
-                                res.json({version: req.body.version, session: req.body.session, response: {
-                                        text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
-                                        end_session: false,
-                                    },
-                                });
-                            //});
+                            res.json({version: req.body.version, session: req.body.session, response: {
+                                    text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
+                                    end_session: false,
+                                },
+                            });
                         }
                     });
                     /////////////////////////////////////////////////////////////////////////////////////////////////
