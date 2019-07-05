@@ -39,6 +39,19 @@ app.post('/', function (req, res) {
             if (rs.rows.length > 0) {
                 if((!(rs.rows[0].auth == 0)) && (rs.rows[0].step==0)){ // NULL
                     // Есть авторизация
+
+                    // Проверяем отмену авторизации
+                    if ((req.body.request.command.toLowerCase().indexOf("выход") !== -1) && (req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)) {
+                        await client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id]);
+                        client.release();
+                        res.json({version: req.body.version, session: req.body.session, response: {
+                                text: "Авторизация отменена",
+                                end_session: false,
+                            },
+                        });
+                        return;
+                    }
+
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                     // Переадрисация на клиента
                     options = {
@@ -147,18 +160,6 @@ app.post('/', function (req, res) {
                         client.release();
                         res.json({version: req.body.version, session: req.body.session, response: {
                                 text: "Авторизация сохранена",
-                                end_session: false,
-                            },
-                        });
-                        return;
-                    }
-
-                    // Проверяем отмену авторизации
-                    if ((req.body.request.command.toLowerCase().indexOf("выход") !== -1) && (req.body.request.command.toLowerCase().indexOf("авторизац") !== -1)) {
-                        await client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id]);
-                        client.release();
-                        res.json({version: req.body.version, session: req.body.session, response: {
-                                text: "Авторизация отменена",
                                 end_session: false,
                             },
                         });
