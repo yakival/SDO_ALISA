@@ -102,6 +102,13 @@ app.post('/', function (req, res) {
                             });
                             return;
                         }
+                        client.release();
+                        res.json({version: req.body.version, session: req.body.session, response: {
+                                text: command,
+                                end_session: false,
+                            },
+                        });
+                        return;
 
                         let mURL = command.split(" ");
                         sURL = "";
