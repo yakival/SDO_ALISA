@@ -79,11 +79,13 @@ app.post('/', function (req, res) {
                     // Получаем адрес ресурса
                     if(step==1){
                         if(command===""){
+                            client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Укажите адрес ресурса",
                                     end_session: false,
                                 },
                             });
+                            return;
                         }
 
                         let mURL = command.split(" ");
@@ -103,15 +105,18 @@ app.post('/', function (req, res) {
                                 end_session: false,
                             },
                         });
+                        return;
                     }
                     // Получаем логин
                     if(step==2){
                         if(command===""){
+                            client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Задайте логин",
                                     end_session: false,
                                 },
                             });
+                            return;
                         }
 
                         await client.query("UPDATE users SET auth=$1, step=3 where name=$2;", [command, req.body.session.user_id]);
@@ -122,15 +127,18 @@ app.post('/', function (req, res) {
                                 end_session: false,
                             },
                         });
+                        return;
                     }
                     // Получаем пароль
                     if(step==3){
                         if(command===""){
+                            client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Задайте пароль",
                                     end_session: false,
                                 },
                             });
+                            return;
                         }
 
                         let str = "" + rs.rows[0].auth + ":" + command;
