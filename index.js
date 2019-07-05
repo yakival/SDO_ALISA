@@ -133,7 +133,7 @@ app.post('/', function (req, res) {
                             });
                             return;
                         }
-                        if((command.split(" ").length>0)||(command.length<7)){
+                        if((command.split(" ").length>1)||(command.length<7)){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Логин указан не правильно. Задайте логин",
@@ -164,7 +164,7 @@ app.post('/', function (req, res) {
                             });
                             return;
                         }
-                        if((command.split(" ").length>0)||(command.length<7)){
+                        if((command.split(" ").length>1)||(command.length<7)){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Пароль указан не правильно. Задайте пароль",
