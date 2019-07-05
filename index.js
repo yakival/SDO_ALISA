@@ -33,7 +33,7 @@ app.post('/', function (req, res) {
             ////////////////////////////////////////////////////
 
             // Проверяем пользователя в базе данных
-            let command = "" + req.body.request.command;
+            let command = "" + req.body.original_utterance;
             if(command==="ping") command = "";
             let rs = await client.query("SELECT * FROM users WHERE name=$1;", [req.body.session.user_id]);
             if (rs.rows.length > 0) {
@@ -62,7 +62,7 @@ app.post('/', function (req, res) {
                             "Authorization" : "Basic " + Buffer.from(rs.rows[0].auth).toString("base64")
                         },
                         body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
-                            command: req.body.request.command
+                            command: req.body.original_utterance
                         })
                     };
                     request_(options, function (error, response, body) {
