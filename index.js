@@ -103,7 +103,7 @@ app.post('/', function (req, res) {
                             return;
                         }
 
-                        if((command.split(".")<3)||(command.indexOf("http")===-1)){
+                        if((command.split(".")<3)||(command.toLowerCase().indexOf("http")===-1)){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Укажите правильный адрес ресурса",
