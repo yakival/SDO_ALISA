@@ -75,8 +75,9 @@ app.post('/', function (req, res) {
                     });
                     /////////////////////////////////////////////////////////////////////////////////////////////////
                 }else{
+                    let step = rs.rows[0].step;
                     // Получаем адрес ресурса
-                    if(rs.rows[0].step==1){
+                    if(step==1){
                         if(command===""){
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Укажите адрес ресурса",
@@ -104,7 +105,7 @@ app.post('/', function (req, res) {
                         });
                     }
                     // Получаем логин
-                    if(rs.rows[0].step==2){
+                    if(step==2){
                         if(command===""){
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Задайте логин",
@@ -123,7 +124,7 @@ app.post('/', function (req, res) {
                         });
                     }
                     // Получаем пароль
-                    if(rs.rows[0].step==3){
+                    if(step==3){
                         if(command===""){
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Задайте пароль",
