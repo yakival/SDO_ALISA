@@ -34,6 +34,7 @@ app.post('/', function (req, res) {
 
             // Проверяем пользователя в базе данных
             let command = "" + req.body.request.command;
+            if(command==="ping") command = "";
             let rs = await client.query("SELECT * FROM users WHERE name=$1;", [req.body.session.user_id]);
             if (rs.rows.length > 0) {
                 if((!(rs.rows[0].auth == 0)) && (rs.rows[0].step==0)){ // NULL
