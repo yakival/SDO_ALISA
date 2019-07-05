@@ -86,15 +86,6 @@ app.post('/', function (req, res) {
                         }
 
                         let mURL = command.split(" ");
-                        // Возвращаем результат
-                        client.release();
-                        res.json({version: req.body.version, session: req.body.session, response: {
-                                text: "---"+mURL.length,
-                                end_session: false,
-                            },
-                        });
-                        return;
-
                         sURL = "";
                         let i = 0;
                         for(i=0; i<mURL.length; i++){
