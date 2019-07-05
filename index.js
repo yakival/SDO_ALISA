@@ -64,14 +64,14 @@ app.post('/', function (req, res) {
                             });
                         } else {
                             // Удаляем привязку, если не смогли перейти на клиента
-                            client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function (err, rs) {
+                            //client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function (err, rs) {
                                 client.release();
                                 res.json({version: req.body.version, session: req.body.session, response: {
                                         text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
                                         end_session: false,
                                     },
                                 });
-                            });
+                            //});
                         }
                     });
                     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,42 +144,13 @@ app.post('/', function (req, res) {
 
                         let str = "" + rs.rows[0].auth + ":" + command;
                         await client.query("UPDATE users SET auth=$1, step=0 where name=$2;", [str, req.body.session.user_id]);
-                        /////////////////////////////////////////////////////////////////////////////////////////////////
-                        // Переадрисация на клиента
-                        options = {
-                            url: rs.rows[0].url + "/close/alisa.asp",
-                            method: 'PUT',
-                            headers : {
-                                "Authorization" : "Basic " + Buffer.from(str).toString("base64")
+                        client.release();
+                        res.json({version: req.body.version, session: req.body.session, response: {
+                                text: "Авторизация сохранена",
+                                end_session: false,
                             },
-                            body: JSON.stringify( {session: req.body.session, nlu: req.body.request.nlu,
-                                command: req.body.request.command
-                            })
-                        };
-                        request_(options, function (error, response, body) {
-                            if (!error) {
-                                client.release();
-                                res.json({
-                                    version: req.body.version,
-                                    session: req.body.session,
-                                    response: {
-                                        text: body,
-                                        end_session: false,
-                                    },
-                                });
-                            } else {
-                                // Удаляем привязку, если не смогли перейти на клиента
-                                client.query("DELETE FROM users WHERE name=$1;", [req.body.session.user_id], function (err, rs) {
-                                    client.release();
-                                    res.json({version: req.body.version, session: req.body.session, response: {
-                                            text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
-                                            end_session: false,
-                                        },
-                                    });
-                                });
-                            }
                         });
-                        /////////////////////////////////////////////////////////////////////////////////////////////////
+                        return;
                     }
 
                     // Проверяем отмену авторизации
