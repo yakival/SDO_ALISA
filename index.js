@@ -42,7 +42,7 @@ app.post('/', function (req, res) {
                     // Возвращаем результат
                     client.release();
                     res.json({version: req.body.version, session: req.body.session, response: {
-                            text: (""+rs.rows[0].auth).toString("base64"),
+                            text: rs.rows[0].auth.toString("base64"),
                             end_session: false,
                         },
                     });
