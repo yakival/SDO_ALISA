@@ -143,6 +143,15 @@ app.post('/', function (req, res) {
                             return;
                         }
                         let validation = new RegExp(/^[A-Za-z0-9_]+$/);
+                        if(!validation){
+                            client.release();
+                            res.json({version: req.body.version, session: req.body.session, response: {
+                                    text: "!!!!",
+                                    end_session: false,
+                                },
+                            });
+                            return;
+                        }
                         await client.query("UPDATE users SET auth=$1, step=3 where name=$2;", [command, req.body.session.user_id]);
                         // Возвращаем результат
                         client.release();
