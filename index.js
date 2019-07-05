@@ -104,6 +104,16 @@ app.post('/', function (req, res) {
                         }
 
                         let mURL = command.split(" ");
+                        if(mURL.length<4){
+                            // Возвращаем результат
+                            client.release();
+                            res.json({version: req.body.version, session: req.body.session, response: {
+                                    text: "Не правильно задан адрес. Укажите правильный адрес ресурса.",
+                                    end_session: false,
+                                },
+                            });
+                            return;
+                        }
                         sURL = "";
                         let i = 0;
                         for(i=0; i<mURL.length; i++){
