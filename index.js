@@ -125,13 +125,14 @@ app.post('/', function (req, res) {
                     }
                     // Получаем пароль
                     if(step==3){
-                        if(command===""){
+                        //if(command===""){
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Задайте пароль",
                                     end_session: false,
                                 },
                             });
-                        }
+                        //}
+                        return;
 
                         let str = "" + rs.rows[0].auth + ":" + command;
                         await client.query("UPDATE users SET auth=$1, step=0 where name=$2;", [str, req.body.session.user_id]);
