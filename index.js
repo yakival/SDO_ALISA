@@ -66,20 +66,18 @@ app.post('/', function (req, res) {
                     client.release();
                     request_(options, function (error, response, body) {
                         if (!error) {
-                            /*
                             if (body.toLowerCase() === "пароль изменен") {
                                 client.query("UPDATE users SET auth=$1, step=3 where name=$2;",
                                     [rs.rows[0].auth.split(":")[0], req.body.session.user_id], function (err) {
                                     client.release();
                                     res.json({
                                         version: req.body.version, session: req.body.session, response: {
-                                            text: body + ". Повторно укажите пароль для авторизации.",
+                                            text: body + ". Укажите пароль для авторизации.",
                                             end_session: false,
                                         },
                                     });
                                 });
                             } else {
-                            */
                                 res.json({
                                     version: req.body.version,
                                     session: req.body.session,
@@ -88,7 +86,7 @@ app.post('/', function (req, res) {
                                         end_session: false,
                                     },
                                 });
-                            //}
+                            }
                         } else {
                             res.json({version: req.body.version, session: req.body.session, response: {
                                     text: "Ошибка подключения к ресурсу " + sURL + ". " + error,
