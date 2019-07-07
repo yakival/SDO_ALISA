@@ -1,6 +1,5 @@
 /.idea
 /node_modules
 npm-debug.log
-deploy.bat
 .DS_Store
 /*.env
