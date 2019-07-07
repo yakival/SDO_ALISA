@@ -68,7 +68,7 @@ app.post('/', function (req, res) {
                         if (!error) {
                             if (body.toLowerCase() === "пароль изменен") {
                                 client.query("UPDATE users SET auth=$1, step=3 where name=$2;",
-                                    [rs.rows[0].auth.split(":")[0], req.body.session.user_id], function (err) {
+                                    [rs.rows[0].auth.split(":")[0], req.body.session.user_id], function (err, result) {
                                     client.release();
                                     res.json({
                                         version: req.body.version, session: req.body.session, response: {
