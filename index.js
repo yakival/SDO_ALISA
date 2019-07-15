@@ -16,19 +16,20 @@ app.post('/', function (req, res) {
             const Pool = require('pg-pool');
             const url = require('url')
 
+            // Параметры подключения
+            const params = url.parse(process.env.DATABASE_URL);
+            const auth = params.auth.split(':');
+
             res.json({
                 version: req.body.version,
                 session: req.body.session,
                 response: {
-                    text: process.env.DATABASE_URL,
+                    text: params.hostname,
                     end_session: false,
                 },
             });
             return;
 
-            // Параметры подключения
-            const params = url.parse(process.env.DATABASE_URL);
-            const auth = params.auth.split(':');
             const config = {
                 user: auth[0],
                 password: auth[1],
