@@ -24,7 +24,7 @@ app.post('/', function (req, res) {
                 version: req.body.version,
                 session: req.body.session,
                 response: {
-                    text: params.hostname,
+                    text: process.env.DATABASE_URL,
                     end_session: false,
                 },
             });
