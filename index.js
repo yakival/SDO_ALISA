@@ -101,7 +101,7 @@ app.post('/', function (req, res) {
                 }else{
                     let step = rs.rows[0].step;
                     // Получаем адрес ресурса
-                    if(step==1){
+                    if(step===1){
                         if(command===""){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
@@ -132,7 +132,7 @@ app.post('/', function (req, res) {
                         return;
                     }
                     // Получаем логин
-                    if(step==2){
+                    if(step===2){
                         if(command===""){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
@@ -163,7 +163,7 @@ app.post('/', function (req, res) {
                         return;
                     }
                     // Получаем пароль
-                    if(step==3){
+                    if(step===3){
                         if(command===""){
                             client.release();
                             res.json({version: req.body.version, session: req.body.session, response: {
