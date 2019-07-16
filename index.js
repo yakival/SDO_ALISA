@@ -20,16 +20,6 @@ app.post('/', function (req, res) {
             const params = url.parse(process.env.DATABASE_URL);
             const auth = params.auth.split(':');
 
-            res.json({
-                version: req.body.version,
-                session: req.body.session,
-                response: {
-                    text: process.env.DATABASE_URL,
-                    end_session: false,
-                },
-            });
-            return;
-
             const config = {
                 user: auth[0],
                 password: auth[1],
